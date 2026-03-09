@@ -7,6 +7,7 @@ import 'src/application/state/workout_session_controller.dart';
 import 'src/data/db/workout_database.dart';
 import 'src/data/repositories/sqlite_workout_repository.dart';
 import 'src/data/repositories/workout_repository.dart';
+import 'src/data/services/exercise_library.dart';
 import 'src/data/services/openrouter_key_store.dart';
 import 'src/data/services/speech_to_text_service.dart';
 import 'src/ui/screens/workout_home_screen.dart';
@@ -14,6 +15,10 @@ import 'src/ui/theme/app_theme.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  
+  // Load the exercise library from assets before starting the app
+  await ExerciseLibrary.load();
+  
   runApp(const AutoGymTrackApp());
 }
 
@@ -40,7 +45,12 @@ class AutoGymTrackApp extends StatelessWidget {
           create: (context) => WorkoutCaptureController(speechToTextService: context.read<SpeechToTextService>()),
         ),
       ],
-      child: MaterialApp(title: 'Auto Gym Track', theme: AppTheme.light(), home: const WorkoutHomeScreen()),
+      child: MaterialApp(
+        title: 'Auto Gym Track', 
+        theme: AppTheme.light(), 
+        home: const WorkoutHomeScreen(),
+        debugShowCheckedModeBanner: false,
+      ),
     );
   }
 }

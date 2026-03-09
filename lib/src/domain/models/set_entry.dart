@@ -2,6 +2,7 @@ class SetEntry {
   const SetEntry({
     this.id,
     required this.exerciseEntryId,
+    required this.exerciseName,
     required this.setNumber,
     required this.reps,
     required this.weight,
@@ -12,6 +13,7 @@ class SetEntry {
 
   final int? id;
   final int exerciseEntryId;
+  final String exerciseName;
   final int setNumber;
   final int reps;
   final double weight;
@@ -36,6 +38,7 @@ class SetEntry {
     return SetEntry(
       id: map['id'] as int?,
       exerciseEntryId: map['exercise_entry_id'] as int,
+      exerciseName: map['exercise_name'] as String? ?? 'Unknown',
       setNumber: map['set_number'] as int,
       reps: map['reps'] as int,
       weight: (map['weight'] as num).toDouble(),

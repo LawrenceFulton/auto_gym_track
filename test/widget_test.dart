@@ -48,7 +48,22 @@ class _InMemoryWorkoutRepository implements WorkoutRepository {
   Future<int> createSession(String templateName) async => 1;
 
   @override
+  Future<void> finishSession(int sessionId) async {}
+
+  @override
+  Future<void> deleteSession(int sessionId) async {}
+
+  @override
+  Future<void> deleteSet(int setId) async {}
+
+  @override
+  Future<void> updateSet(int setId, {required int reps, required double weight, required String unit}) async {}
+
+  @override
   Future<List<SetEntry>> getSessionSetHistory(int sessionId) async => const [];
+
+  @override
+  Future<List<SetEntry>> getLastSetHistoryForExercise(String exerciseName) async => const [];
 
   @override
   Future<List<WorkoutTemplate>> getWorkoutTemplates() async => List.unmodifiable(_templates);
@@ -56,5 +71,10 @@ class _InMemoryWorkoutRepository implements WorkoutRepository {
   @override
   Future<void> saveWorkoutTemplate(WorkoutTemplate template) async {
     _templates.add(template);
+  }
+
+  @override
+  Future<void> deleteWorkoutTemplate(String name) async {
+    _templates.removeWhere((t) => t.name == name);
   }
 }

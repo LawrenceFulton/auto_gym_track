@@ -21,6 +21,23 @@ class SqliteWorkoutRepository implements WorkoutRepository {
   }
 
   @override
+  Future<void> finishSession(int sessionId) async {
+    final db = await _database.open();
+    await db.update(
+      'workout_sessions',
+      {'ended_at': DateTime.now().toIso8601String()},
+      where: 'id = ?',
+      whereArgs: [sessionId],
+    );
+  }
+
+  @override
+  Future<void> deleteSession(int sessionId) async {
+    final db = await _database.open();
+    await db.delete('workout_sessions', where: 'id = ?', whereArgs: [sessionId]);
+  }
+
+  @override
   Future<void> addParsedSet({
     required int sessionId,
     required ParsedWorkoutSet parsed,
@@ -50,17 +67,72 @@ class SqliteWorkoutRepository implements WorkoutRepository {
   }
 
   @override
+  Future<void> deleteSet(int setId) async {
+    final db = await _database.open();
+    await db.delete('set_entries', where: 'id = ?', whereArgs: [setId]);
+  }
+
+  @override
+  Future<void> updateSet(int setId, {required int reps, required double weight, required String unit}) async {
+    final db = await _database.open();
+    await db.update(
+      'set_entries',
+      {'reps': reps, 'weight': weight, 'unit': unit},
+      where: 'id = ?',
+      whereArgs: [setId],
+    );
+  }
+
+  @override
   Future<List<SetEntry>> getSessionSetHistory(int sessionId) async {
     final db = await _database.open();
     final rows = await db.rawQuery(
       '''
-      SELECT se.*
+      SELECT se.*, ee.exercise_name
       FROM set_entries se
       INNER JOIN exercise_entries ee ON ee.id = se.exercise_entry_id
       WHERE ee.session_id = ?
       ORDER BY se.created_at ASC
     ''',
       [sessionId],
+    );
+
+    return rows.map(SetEntry.fromMap).toList();
+  }
+
+  @override
+  Future<List<SetEntry>> getLastSetHistoryForExercise(String exerciseName) async {
+    final db = await _database.open();
+
+    // Find the most recent session that includes this exercise
+    final lastSessionRows = await db.rawQuery(
+      '''
+      SELECT ee.session_id
+      FROM exercise_entries ee
+      INNER JOIN workout_sessions ws ON ws.id = ee.session_id
+      WHERE ee.exercise_name = ? AND ws.ended_at IS NOT NULL
+      ORDER BY ws.ended_at DESC
+      LIMIT 1
+    ''',
+      [exerciseName],
+    );
+
+    if (lastSessionRows.isEmpty) {
+      return const [];
+    }
+
+    final sessionId = lastSessionRows.first['session_id'] as int;
+
+    // Get all sets for this exercise from that session
+    final rows = await db.rawQuery(
+      '''
+      SELECT se.*, ee.exercise_name
+      FROM set_entries se
+      INNER JOIN exercise_entries ee ON ee.id = se.exercise_entry_id
+      WHERE ee.session_id = ? AND ee.exercise_name = ?
+      ORDER BY se.set_number ASC
+    ''',
+      [sessionId, exerciseName],
     );
 
     return rows.map(SetEntry.fromMap).toList();
@@ -118,6 +190,19 @@ class SqliteWorkoutRepository implements WorkoutRepository {
           'planned_sets': exercise.plannedSets,
           'order_index': i,
         });
+      }
+    });
+  }
+
+  @override
+  Future<void> deleteWorkoutTemplate(String name) async {
+    final db = await _database.open();
+    await db.transaction((txn) async {
+      final templates = await txn.query('workout_templates', where: 'name = ?', whereArgs: [name]);
+      if (templates.isNotEmpty) {
+        final templateId = templates.first['id'] as int;
+        await txn.delete('template_exercises', where: 'template_id = ?', whereArgs: [templateId]);
+        await txn.delete('workout_templates', where: 'id = ?', whereArgs: [templateId]);
       }
     });
   }

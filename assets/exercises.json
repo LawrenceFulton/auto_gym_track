@@ -1,0 +1,158 @@
+[
+  {
+    "name": "Bench Press",
+    "synonyms": ["Bankdrücken", "Bankdrukken", "Chest Press", "Borstdrukken", "Barbell Bench Press", "Flat Bench Press", "Bench"]
+  },
+  {
+    "name": "Incline Bench Press",
+    "synonyms": ["Schrägbankdrücken", "Schuine Bankdrukken", "Incline Press", "Incline Barbell Bench Press", "Incline Chest Press"]
+  },
+  {
+    "name": "Decline Bench Press",
+    "synonyms": ["Negativbankdrücken", "Achteroverhellend Bankdrukken", "Decline Press", "Decline Chest Press"]
+  },
+  {
+    "name": "Chest Fly",
+    "synonyms": ["Fliegende", "Borst Fly", "Dumbbell Fly", "Dumbbell Flyes", "Pec Fly", "Butterfly"]
+  },
+  {
+    "name": "Push-ups",
+    "synonyms": ["Liegestütze", "Opdrukken", "Pushup", "Pushups", "Press-up", "Press-ups"]
+  },
+  {
+    "name": "Dips",
+    "synonyms": ["Barrenstütz", "Parallel Dips", "Tricep Dips", "Parallel Bar Dips"]
+  },
+  {
+    "name": "Overhead Press",
+    "synonyms": ["Schulterdrücken", "Military Press", "Nackendrücken", "Shoulder Press", "OHP", "Strict Press"]
+  },
+  {
+    "name": "Side Lateral Raise",
+    "synonyms": ["Seitheben", "Zijwaarts Hef", "Lateral Raise", "Lateral Raises", "Dumbbell Lateral Raise"]
+  },
+  {
+    "name": "Front Raise",
+    "synonyms": ["Frontheben", "Voorwaarts Hef", "Front Raises", "Dumbbell Front Raise"]
+  },
+  {
+    "name": "Bent Over Row",
+    "synonyms": ["Vorgebeugtes Rudern", "Voorovergebogen Roeien", "Bent-Over Row", "Barbell Row", "BB Row"]
+  },
+  {
+    "name": "Lat Pulldown",
+    "synonyms": ["Latzug", "Lat Trekken", "Lat Pull-down", "Pulldown", "Wide-Grip Pulldown"]
+  },
+  {
+    "name": "Pull-ups",
+    "synonyms": ["Klimmzüge", "Optrekken", "Pullup", "Pullups", "Strict Pull-up"]
+  },
+  {
+    "name": "Deadlift",
+    "synonyms": ["Kreuzheben", "Deadliften", "Barbell Deadlift", "Conventional Deadlift", "Dead lift"]
+  },
+  {
+    "name": "Squat",
+    "synonyms": ["Kniebeuge", "Kniebuigen", "Back Squat", "Barbell Squat", "Deep Squat"]
+  },
+  {
+    "name": "Leg Press",
+    "synonyms": ["Beinpresse", "Beenpers", "Beenpress", "Sled Leg Press", "45 Degree Leg Press"]
+  },
+  {
+    "name": "Leg Extension",
+    "synonyms": ["Beinstrecken", "Beenstrekken", "Leg Extensions", "Quad Extension"]
+  },
+  {
+    "name": "Leg Curl",
+    "synonyms": ["Beinbeugen", "Beencurl", "Leg Curls", "Hamstring Curl", "Hamstring Curls"]
+  },
+  {
+    "name": "Lunges",
+    "synonyms": ["Ausfallschritte", "Ausfallschritt", "Walking Lunges", "Reverse Lunges", "Forward Lunges"]
+  },
+  {
+    "name": "Calf Raise",
+    "synonyms": ["Wadenheben", "Kuitheffen", "Calf Raises", "Standing Calf Raise", "Seated Calf Raise"]
+  },
+  {
+    "name": "Bicep Curl",
+    "synonyms": ["Bizepscurl", "Bicep Krullen", "Biceps Curl", "Biceps Curls", "Dumbbell Curl", "DB Curl"]
+  },
+  {
+    "name": "Hammer Curl",
+    "synonyms": ["Hammercurl", "Hammer Curls", "Dumbbell Hammer Curl"]
+  },
+  {
+    "name": "Tricep Extension",
+    "synonyms": ["Trizepsdrücken", "Tricep Extensie", "Triceps Extension", "Triceps Extensions", "Overhead Tricep Extension", "Overhead Triceps Extension", "Trizepsstrecken"]
+  },
+  {
+    "name": "Skullcrushers",
+    "synonyms": ["Stirndrücken", "French Press", "Lying Tricep Extension", "Lying Triceps Extension"]
+  },
+  {
+    "name": "Plank",
+    "synonyms": ["Unterarmstütz", "Planken", "Front Plank", "Forearm Plank"]
+  },
+  {
+    "name": "Crunches",
+    "synonyms": ["Bauchpresse", "Ab Crunch", "Ab Crunches", "Crunch"]
+  },
+  {
+    "name": "Leg Raise",
+    "synonyms": ["Beinheben", "Beenheffen", "Leg Raises", "Hanging Leg Raise", "Hanging Leg Raises"]
+  },
+  {
+    "name": "Russian Twist",
+    "synonyms": ["Rumpfdrehen", "Russian Twists", "Seated Twist"]
+  },
+  {
+    "name": "Arnold Press",
+    "synonyms": ["Arnold Schulterdrücken", "Arnold Shoulder Press", "Arnold Dumbbell Press"]
+  },
+  {
+    "name": "Face Pulls",
+    "synonyms": ["Gesichtszüge", "Face Pull", "Cable Face Pull", "Rope Face Pull"]
+  },
+  {
+    "name": "Cable Row",
+    "synonyms": ["Kabelrudern", "Kabelroeien", "Seated Cable Row", "Low Row", "Cable Seated Row"]
+  },
+  {
+    "name": "T-Bar Row",
+    "synonyms": ["T-Hantel-Rudern", "T Bar Row", "T-Bar Rudern"]
+  },
+  {
+    "name": "Hack Squat",
+    "synonyms": ["Hackenschmidt Kniebeuge", "Machine Hack Squat", "Hack Squats"]
+  },
+  {
+    "name": "Hip Thrust",
+    "synonyms": ["Hüftstoß", "Beckendrücken", "Barbell Hip Thrust", "BB Hip Thrust"]
+  },
+  {
+    "name": "Romanian Deadlift",
+    "synonyms": ["Rumänisches Kreuzheben", "RDL", "Romanian DL", "Barbell Romanian Deadlift"]
+  },
+  {
+    "name": "Goblet Squat",
+    "synonyms": ["Kelch-Kniebeuge", "Dumbbell Goblet Squat", "Kettlebell Goblet Squat"]
+  },
+  {
+    "name": "Box Jump",
+    "synonyms": ["Kistensprung", "Box Jumps", "Plyo Box Jump"]
+  },
+  {
+    "name": "Burpees",
+    "synonyms": ["Liegestützsprung", "Burpee"]
+  },
+  {
+    "name": "Mountain Climbers",
+    "synonyms": ["Bergsteiger", "Mountain Climber", "Cross-Body Mountain Climbers"]
+  },
+  {
+    "name": "Bicycle Crunches",
+    "synonyms": ["Fahrrad-Crunches", "Bicycle Crunch", "Air Bike Crunches", "Cycling Crunches"]
+  }
+]

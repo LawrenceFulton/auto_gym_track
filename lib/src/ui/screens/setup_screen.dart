@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+import '../../application/state/workout_session_controller.dart';
 import '../../data/repositories/workout_repository.dart';
+import '../../data/services/exercise_library.dart';
 import '../../domain/models/workout_template.dart';
 
 class SetupScreen extends StatefulWidget {
@@ -71,6 +73,10 @@ class _SetupScreenState extends State<SetupScreen> {
         _selectedTemplateIndex = 0;
         _isLoading = false;
       });
+
+      if (templates.isNotEmpty) {
+        context.read<WorkoutSessionController>().preCacheTemplateReferences(templates[0]);
+      }
     } catch (exception) {
       if (!mounted) {
         return;
@@ -79,6 +85,37 @@ class _SetupScreenState extends State<SetupScreen> {
         _isLoading = false;
       });
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Failed to load workouts: $exception')));
+    }
+  }
+
+  Future<void> _deleteSelectedTemplate() async {
+    final template = _selectedTemplate;
+    if (template == null) return;
+
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Delete Template?'),
+        content: Text('Are you sure you want to delete "${template.name}"?'),
+        actions: [
+          TextButton(onPressed: () => Navigator.pop(context, false), child: const Text('Cancel')),
+          TextButton(
+            onPressed: () => Navigator.pop(context, true),
+            child: const Text('Delete', style: TextStyle(color: Colors.red)),
+          ),
+        ],
+      ),
+    );
+
+    if (confirmed == true) {
+      try {
+        await context.read<WorkoutRepository>().deleteWorkoutTemplate(template.name);
+        await _loadTemplates();
+      } catch (e) {
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Failed to delete template: $e')));
+        }
+      }
     }
   }
 
@@ -94,20 +131,16 @@ class _SetupScreenState extends State<SetupScreen> {
 
     try {
       await repository.saveWorkoutTemplate(created);
-
-      if (!mounted) {
-        return;
+      await _loadTemplates();
+      if (mounted) {
+        setState(() {
+          _selectedTemplateIndex = _templates.indexWhere((t) => t.name == created.name);
+        });
       }
-
-      setState(() {
-        _templates = [..._templates, created];
-        _selectedTemplateIndex = _templates.length - 1;
-      });
     } catch (exception) {
-      if (!mounted) {
-        return;
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Failed to save workout: $exception')));
       }
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Failed to save workout: $exception')));
     }
   }
 
@@ -146,21 +179,36 @@ class _SetupScreenState extends State<SetupScreen> {
             ),
           ),
           const SizedBox(height: 12),
-          DropdownButtonFormField<int>(
-            initialValue: _templates.isEmpty ? null : _selectedTemplateIndex,
-            decoration: const InputDecoration(labelText: 'Workout Template'),
-            items: [
-              for (var i = 0; i < _templates.length; i++)
-                DropdownMenuItem<int>(value: i, child: Text(_templates[i].name)),
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.end,
+            children: [
+              Expanded(
+                child: DropdownButtonFormField<int>(
+                  initialValue: _templates.isEmpty ? null : _selectedTemplateIndex,
+                  decoration: const InputDecoration(labelText: 'Workout Template'),
+                  items: [
+                    for (var i = 0; i < _templates.length; i++)
+                      DropdownMenuItem<int>(value: i, child: Text(_templates[i].name)),
+                  ],
+                  onChanged: (value) {
+                    if (value == null) {
+                      return;
+                    }
+                    setState(() {
+                      _selectedTemplateIndex = value;
+                    });
+                    context.read<WorkoutSessionController>().preCacheTemplateReferences(_templates[value]);
+                  },
+                ),
+              ),
+              const SizedBox(width: 8),
+              IconButton(
+                onPressed: selectedTemplate == null ? null : _deleteSelectedTemplate,
+                icon: const Icon(Icons.delete_outline),
+                tooltip: 'Delete Template',
+                color: Colors.red,
+              ),
             ],
-            onChanged: (value) {
-              if (value == null) {
-                return;
-              }
-              setState(() {
-                _selectedTemplateIndex = value;
-              });
-            },
           ),
           const SizedBox(height: 16),
           Text('Workout Preview', style: Theme.of(context).textTheme.titleMedium),
@@ -226,19 +274,16 @@ class CreateWorkoutScreen extends StatefulWidget {
 }
 
 class _CreateWorkoutScreenState extends State<CreateWorkoutScreen> {
-  static const _exerciseOptions = [
-    'Push-ups',
-    'Plank',
-    'Squat Crunch',
-    'Bench Press',
-    'Overhead Press',
-    'Bent Over Row',
-    'Deadlift',
-    'Lunges',
-  ];
+  final List<String> _exerciseOptions = ExerciseLibrary.exerciseNames;
 
   final _nameController = TextEditingController();
-  final List<_ExerciseDraft> _drafts = [_ExerciseDraft(name: _exerciseOptions.first, sets: 3)];
+  late final List<_ExerciseDraft> _drafts;
+
+  @override
+  void initState() {
+    super.initState();
+    _drafts = [_ExerciseDraft(name: _exerciseOptions.isNotEmpty ? _exerciseOptions.first : 'Exercise', sets: 3)];
+  }
 
   @override
   void dispose() {
@@ -248,7 +293,7 @@ class _CreateWorkoutScreenState extends State<CreateWorkoutScreen> {
 
   void _addExercise() {
     setState(() {
-      _drafts.add(_ExerciseDraft(name: _exerciseOptions.first, sets: 3));
+      _drafts.add(_ExerciseDraft(name: _exerciseOptions.isNotEmpty ? _exerciseOptions.first : 'Exercise', sets: 3));
     });
   }
 
@@ -305,24 +350,50 @@ class _CreateWorkoutScreenState extends State<CreateWorkoutScreen> {
                         padding: const EdgeInsets.only(bottom: 12),
                         child: LayoutBuilder(
                           builder: (context, constraints) {
-                            final exerciseDropdown = DropdownButtonFormField<String>(
-                              initialValue: _drafts[i].name,
-                              isExpanded: true,
-                              decoration: const InputDecoration(labelText: 'Exercise'),
-                              items: [
-                                for (final option in _exerciseOptions)
-                                  DropdownMenuItem<String>(
-                                    value: option,
-                                    child: Text(option, overflow: TextOverflow.ellipsis),
-                                  ),
-                              ],
-                              onChanged: (value) {
-                                if (value == null) {
-                                  return;
-                                }
+                            final exerciseInput = RawAutocomplete<String>(
+                              initialValue: TextEditingValue(text: _drafts[i].name),
+                              optionsBuilder: (TextEditingValue textEditingValue) {
+                                return ExerciseLibrary.search(textEditingValue.text);
+                              },
+                              onSelected: (String selection) {
                                 setState(() {
-                                  _drafts[i] = _drafts[i].copyWith(name: value);
+                                  _drafts[i] = _drafts[i].copyWith(name: selection);
                                 });
+                              },
+                              fieldViewBuilder: (context, controller, focusNode, onFieldSubmitted) {
+                                return TextField(
+                                  controller: controller,
+                                  focusNode: focusNode,
+                                  decoration: const InputDecoration(labelText: 'Exercise'),
+                                  onChanged: (value) {
+                                    setState(() {
+                                      _drafts[i] = _drafts[i].copyWith(name: value);
+                                    });
+                                  },
+                                );
+                              },
+                              optionsViewBuilder: (context, onSelected, options) {
+                                return Align(
+                                  alignment: Alignment.topLeft,
+                                  child: Material(
+                                    elevation: 4.0,
+                                    child: SizedBox(
+                                      width: constraints.maxWidth,
+                                      height: 200,
+                                      child: ListView.builder(
+                                        padding: const EdgeInsets.all(8.0),
+                                        itemCount: options.length,
+                                        itemBuilder: (BuildContext context, int index) {
+                                          final String option = options.elementAt(index);
+                                          return GestureDetector(
+                                            onTap: () => onSelected(option),
+                                            child: ListTile(title: Text(option)),
+                                          );
+                                        },
+                                      ),
+                                    ),
+                                  ),
+                                );
                               },
                             );
 
@@ -351,7 +422,7 @@ class _CreateWorkoutScreenState extends State<CreateWorkoutScreen> {
                               return Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  exerciseDropdown,
+                                  exerciseInput,
                                   const SizedBox(height: 10),
                                   Row(
                                     children: [
@@ -369,7 +440,7 @@ class _CreateWorkoutScreenState extends State<CreateWorkoutScreen> {
 
                             return Row(
                               children: [
-                                Expanded(child: exerciseDropdown),
+                                Expanded(child: exerciseInput),
                                 const SizedBox(width: 12),
                                 setsDropdown,
                                 IconButton(

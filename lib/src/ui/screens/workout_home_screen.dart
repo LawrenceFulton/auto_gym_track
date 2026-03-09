@@ -8,6 +8,7 @@ import '../../domain/models/workout_template.dart';
 import 'active_workout_screen.dart';
 import 'openrouter_key_prompt_screen.dart';
 import 'setup_screen.dart';
+import 'workout_summary_screen.dart';
 
 class WorkoutHomeScreen extends StatelessWidget {
   const WorkoutHomeScreen({super.key});
@@ -56,11 +57,38 @@ class WorkoutHomeScreen extends StatelessWidget {
           );
         }
 
+        if (sessionController.isFinished) {
+          return WorkoutSummaryScreen(
+            templateName: sessionController.templateName,
+            duration: sessionController.sessionDuration,
+            totalSets: sessionController.totalSetsCompleted,
+            totalExercises: sessionController.totalExercisesPerformed,
+            onDone: () => sessionController.reset(),
+          );
+        }
+
         return Scaffold(
-          appBar: AppBar(title: Text('Auto Gym Track - ${sessionController.templateName}')),
+          appBar: AppBar(
+            actions: [
+              if (sessionController.hasSession)
+                Padding(
+                  padding: const EdgeInsets.only(right: 8.0),
+                  child: FilledButton.tonalIcon(
+                    onPressed: () => sessionController.finishSession(),
+                    icon: const Icon(Icons.check_rounded, size: 20),
+                    label: const Text('Finish'),
+                    style: FilledButton.styleFrom(
+                      padding: const EdgeInsets.symmetric(horizontal: 16),
+                    ),
+                  ),
+                ),
+            ],
+          ),
           body: sessionController.hasSession
               ? ActiveWorkoutScreen(
-                  currentExercise: sessionController.currentExercise,
+                  plannedExercises: sessionController.plannedExercises,
+                  currentExerciseIndex: sessionController.currentExerciseIndex,
+                  onExerciseChanged: sessionController.goToExercise,
                   history: sessionController.history,
                   openRouterClient: openRouterClient,
                   onSaveParsed: () =>
