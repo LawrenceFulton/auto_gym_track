@@ -92,6 +92,8 @@ class _SetupScreenState extends State<SetupScreen> {
     final template = _selectedTemplate;
     if (template == null) return;
 
+    final colorScheme = Theme.of(context).colorScheme;
+
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
@@ -101,7 +103,7 @@ class _SetupScreenState extends State<SetupScreen> {
           TextButton(onPressed: () => Navigator.pop(context, false), child: const Text('Cancel')),
           TextButton(
             onPressed: () => Navigator.pop(context, true),
-            child: const Text('Delete', style: TextStyle(color: Colors.red)),
+            child: Text('Delete', style: TextStyle(color: colorScheme.error)),
           ),
         ],
       ),
@@ -151,6 +153,7 @@ class _SetupScreenState extends State<SetupScreen> {
     }
 
     final selectedTemplate = _selectedTemplate;
+    final colorScheme = Theme.of(context).colorScheme;
 
     return SingleChildScrollView(
       padding: const EdgeInsets.all(16),
@@ -158,11 +161,17 @@ class _SetupScreenState extends State<SetupScreen> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Card(
+            margin: EdgeInsets.zero,
             child: Padding(
               padding: const EdgeInsets.all(16),
               child: Row(
                 children: [
-                  const CircleAvatar(radius: 22, child: Icon(Icons.playlist_add_check_rounded)),
+                  CircleAvatar(
+                    radius: 22,
+                    backgroundColor: colorScheme.primaryContainer,
+                    foregroundColor: colorScheme.onPrimaryContainer,
+                    child: const Icon(Icons.playlist_add_check_rounded),
+                  ),
                   const SizedBox(width: 12),
                   Expanded(
                     child: Column(
@@ -206,7 +215,6 @@ class _SetupScreenState extends State<SetupScreen> {
                 onPressed: selectedTemplate == null ? null : _deleteSelectedTemplate,
                 icon: const Icon(Icons.delete_outline),
                 tooltip: 'Delete Template',
-                color: Colors.red,
               ),
             ],
           ),
@@ -214,6 +222,7 @@ class _SetupScreenState extends State<SetupScreen> {
           Text('Workout Preview', style: Theme.of(context).textTheme.titleMedium),
           const SizedBox(height: 8),
           Card(
+            margin: EdgeInsets.zero,
             child: Padding(
               padding: const EdgeInsets.all(14),
               child: selectedTemplate == null
@@ -338,6 +347,7 @@ class _CreateWorkoutScreenState extends State<CreateWorkoutScreen> {
             ),
             const SizedBox(height: 16),
             Card(
+              margin: EdgeInsets.zero,
               child: Padding(
                 padding: const EdgeInsets.all(12),
                 child: Column(

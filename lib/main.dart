@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import 'src/application/state/api_key_controller.dart';
+import 'src/application/state/settings_controller.dart';
 import 'src/application/state/workout_capture_controller.dart';
 import 'src/application/state/workout_session_controller.dart';
 import 'src/data/db/workout_database.dart';
@@ -23,10 +24,11 @@ Future<void> main() async {
 }
 
 class AutoGymTrackApp extends StatelessWidget {
-  const AutoGymTrackApp({super.key, this.keyStore, this.workoutRepository});
+  const AutoGymTrackApp({super.key, this.keyStore, this.workoutRepository, this.settingsController});
 
   final OpenRouterKeyStore? keyStore;
   final WorkoutRepository? workoutRepository;
+  final SettingsController? settingsController;
 
   @override
   Widget build(BuildContext context) {
@@ -35,6 +37,9 @@ class AutoGymTrackApp extends StatelessWidget {
         Provider<OpenRouterKeyStore>(create: (_) => keyStore ?? const SecureOpenRouterKeyStore()),
         Provider<WorkoutRepository>(create: (_) => workoutRepository ?? SqliteWorkoutRepository(WorkoutDatabase())),
         Provider<SpeechToTextService>(create: (_) => DeviceSpeechToTextService()),
+        ChangeNotifierProvider<SettingsController>(
+          create: (context) => settingsController ?? (SettingsController()..loadSettings()),
+        ),
         ChangeNotifierProvider<ApiKeyController>(
           create: (context) => ApiKeyController(keyStore: context.read<OpenRouterKeyStore>())..initialize(),
         ),

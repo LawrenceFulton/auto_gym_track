@@ -18,6 +18,7 @@ class ActiveWorkoutScreen extends StatefulWidget {
     required this.history,
     required this.onSaveParsed,
     required this.openRouterClient,
+    required this.defaultUnit,
   });
 
   final List<PlannedExercise> plannedExercises;
@@ -26,6 +27,7 @@ class ActiveWorkoutScreen extends StatefulWidget {
   final List<SetEntry> history;
   final Future<void> Function() onSaveParsed;
   final OpenRouterClient openRouterClient;
+  final String defaultUnit;
 
   @override
   State<ActiveWorkoutScreen> createState() => _ActiveWorkoutScreenState();
@@ -82,6 +84,7 @@ class _ActiveWorkoutScreenState extends State<ActiveWorkoutScreen> {
       currentExercise: currentExercise,
       nextSetNumber: setsDone + 1,
       openRouterClient: widget.openRouterClient,
+      unitPreference: widget.defaultUnit,
     );
   }
 
@@ -121,6 +124,7 @@ class _ActiveWorkoutScreenState extends State<ActiveWorkoutScreen> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Card(
+                  margin: EdgeInsets.zero,
                   child: Padding(
                     padding: const EdgeInsets.all(16),
                     child: Column(
@@ -133,10 +137,8 @@ class _ActiveWorkoutScreenState extends State<ActiveWorkoutScreen> {
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  Text(
-                                    'Exercise ${index + 1} of ${widget.plannedExercises.length}',
-                                    style: Theme.of(context).textTheme.labelSmall,
-                                  ),
+                                  Text('Exercise ${index + 1} of ${widget.plannedExercises.length}',
+                                      style: Theme.of(context).textTheme.labelSmall),
                                   Text(exercise.name, style: Theme.of(context).textTheme.titleLarge),
                                 ],
                               ),
@@ -150,10 +152,8 @@ class _ActiveWorkoutScreenState extends State<ActiveWorkoutScreen> {
                                   color: Theme.of(context).colorScheme.primaryContainer,
                                   borderRadius: BorderRadius.circular(999),
                                 ),
-                                child: Text(
-                                  flow.state.name.toUpperCase(),
-                                  style: Theme.of(context).textTheme.labelSmall,
-                                ),
+                                child:
+                                    Text(flow.state.name.toUpperCase(), style: Theme.of(context).textTheme.labelSmall),
                               ),
                           ],
                         ),
@@ -162,7 +162,7 @@ class _ActiveWorkoutScreenState extends State<ActiveWorkoutScreen> {
                           children: [
                             Text('Progress', style: Theme.of(context).textTheme.labelMedium),
                             Text(
-                              '$setsDone / ${exercise.plannedSets} sets',
+                              '${setsDone} / ${exercise.plannedSets} sets',
                               style: Theme.of(context).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
                             ),
                             const SizedBox(height: 4),
@@ -184,12 +184,8 @@ class _ActiveWorkoutScreenState extends State<ActiveWorkoutScreen> {
                                 child: Icon(Icons.history_rounded, size: 14, color: Theme.of(context).hintColor),
                               ),
                               const SizedBox(width: 4),
-                              Text(
-                                'Last Session:',
-                                style: Theme.of(
-                                  context,
-                                ).textTheme.labelSmall?.copyWith(color: Theme.of(context).hintColor),
-                              ),
+                              Text('Last Session:',
+                                  style: Theme.of(context).textTheme.labelSmall?.copyWith(color: Theme.of(context).hintColor)),
                               const SizedBox(width: 8),
                               Expanded(
                                 child: Wrap(
@@ -198,9 +194,7 @@ class _ActiveWorkoutScreenState extends State<ActiveWorkoutScreen> {
                                   children: lastPerformance.map((set) {
                                     return Text(
                                       '${set.weight}${set.unit} x ${set.reps}',
-                                      style: Theme.of(
-                                        context,
-                                      ).textTheme.labelSmall?.copyWith(fontWeight: FontWeight.bold),
+                                      style: Theme.of(context).textTheme.labelSmall?.copyWith(fontWeight: FontWeight.bold),
                                     );
                                   }).toList(),
                                 ),
@@ -221,6 +215,7 @@ class _ActiveWorkoutScreenState extends State<ActiveWorkoutScreen> {
                     session.currentExercise == exercise.name) ...[
                   const SizedBox(height: 10),
                   Card(
+                    margin: EdgeInsets.zero,
                     child: Padding(
                       padding: const EdgeInsets.all(12),
                       child: Text('"${flow.transcript}"', style: Theme.of(context).textTheme.bodyMedium),
@@ -237,9 +232,7 @@ class _ActiveWorkoutScreenState extends State<ActiveWorkoutScreen> {
         },
       ),
       floatingActionButton: GestureDetector(
-        onLongPressStart: busy
-            ? null
-            : (_) => _startHoldRecording(context, session.currentExercise, session.setsDoneForCurrentExercise),
+        onLongPressStart: busy ? null : (_) => _startHoldRecording(context, session.currentExercise, session.setsDoneForCurrentExercise),
         onLongPressEnd: (_) => _stopHoldRecording(context),
         child: FloatingActionButton(
           onPressed: () {}, // Empty as we use long press

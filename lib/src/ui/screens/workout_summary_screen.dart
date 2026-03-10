@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'exercise_analytics_screen.dart';
 
 class WorkoutSummaryScreen extends StatelessWidget {
   const WorkoutSummaryScreen({
@@ -53,17 +54,32 @@ class WorkoutSummaryScreen extends StatelessWidget {
                 ],
               ),
               const Spacer(),
-              SizedBox(
-                width: double.infinity,
-                child: ElevatedButton.icon(
-                  onPressed: onDone,
-                  icon: const Icon(Icons.home_rounded),
-                  label: const Text('Back to Home'),
-                  style: ElevatedButton.styleFrom(
-                    padding: const EdgeInsets.symmetric(vertical: 16),
-                    textStyle: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+              Row(
+                children: [
+                  Expanded(
+                    child: OutlinedButton.icon(
+                      onPressed: () => Navigator.of(context).push(
+                        MaterialPageRoute(builder: (_) => const ExerciseAnalyticsScreen()),
+                      ),
+                      icon: const Icon(Icons.bar_chart_rounded),
+                      label: const Text('View Progress'),
+                      style: OutlinedButton.styleFrom(
+                        padding: const EdgeInsets.symmetric(vertical: 16),
+                      ),
+                    ),
                   ),
-                ),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: ElevatedButton.icon(
+                      onPressed: onDone,
+                      icon: const Icon(Icons.home_rounded),
+                      label: const Text('Home'),
+                      style: ElevatedButton.styleFrom(
+                        padding: const EdgeInsets.symmetric(vertical: 16),
+                      ),
+                    ),
+                  ),
+                ],
               ),
             ],
           ),

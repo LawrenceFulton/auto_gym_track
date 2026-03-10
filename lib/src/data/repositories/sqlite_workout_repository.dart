@@ -139,6 +139,23 @@ class SqliteWorkoutRepository implements WorkoutRepository {
   }
 
   @override
+  Future<List<SetEntry>> getExerciseHistory(String exerciseName) async {
+    final db = await _database.open();
+    final rows = await db.rawQuery(
+      '''
+      SELECT se.*, ee.exercise_name
+      FROM set_entries se
+      INNER JOIN exercise_entries ee ON ee.id = se.exercise_entry_id
+      WHERE ee.exercise_name = ?
+      ORDER BY se.created_at ASC
+    ''',
+      [exerciseName],
+    );
+
+    return rows.map(SetEntry.fromMap).toList();
+  }
+
+  @override
   Future<List<WorkoutTemplate>> getWorkoutTemplates() async {
     final db = await _database.open();
     final templateRows = await db.query('workout_templates', orderBy: 'id ASC');

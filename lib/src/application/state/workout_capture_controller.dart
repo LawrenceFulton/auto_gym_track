@@ -14,6 +14,7 @@ class WorkoutCaptureController extends ChangeNotifier {
 
   String? _pendingExercise;
   int? _pendingSetNumber;
+  String? _pendingUnitPreference;
   OpenRouterClient? _pendingClient;
 
   WorkoutFlowState get state => _flow.state;
@@ -25,6 +26,7 @@ class WorkoutCaptureController extends ChangeNotifier {
     required String currentExercise,
     required int nextSetNumber,
     required OpenRouterClient openRouterClient,
+    String? unitPreference,
   }) async {
     if (_flow.state == WorkoutFlowState.recording ||
         _flow.state == WorkoutFlowState.transcribing ||
@@ -38,6 +40,7 @@ class WorkoutCaptureController extends ChangeNotifier {
     _flow.transcript = null;
     _pendingExercise = currentExercise;
     _pendingSetNumber = nextSetNumber;
+    _pendingUnitPreference = unitPreference;
     _pendingClient = openRouterClient;
     notifyListeners();
 
@@ -48,6 +51,7 @@ class WorkoutCaptureController extends ChangeNotifier {
       _flow.error = exception.toString();
       _pendingExercise = null;
       _pendingSetNumber = null;
+      _pendingUnitPreference = null;
       _pendingClient = null;
       notifyListeners();
     }
@@ -60,10 +64,12 @@ class WorkoutCaptureController extends ChangeNotifier {
 
     final exercise = _pendingExercise;
     final setNumber = _pendingSetNumber;
+    final unitPreference = _pendingUnitPreference;
     final client = _pendingClient;
 
     _pendingExercise = null;
     _pendingSetNumber = null;
+    _pendingUnitPreference = null;
     _pendingClient = null;
 
     if (exercise == null || setNumber == null || client == null) {
@@ -80,7 +86,12 @@ class WorkoutCaptureController extends ChangeNotifier {
         exerciseName: exercise,
         setNumber: setNumber,
         extractor: (rawTranscript, exerciseName, setNumber) {
-          return client.extractWorkoutSet(rawTranscript, exerciseName: exerciseName, setNumber: setNumber);
+          return client.extractWorkoutSet(
+            rawTranscript, 
+            exerciseName: exerciseName, 
+            setNumber: setNumber,
+            unitPreference: unitPreference,
+          );
         },
       );
     } catch (exception) {

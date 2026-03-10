@@ -19,7 +19,9 @@ class OpenRouterClient {
     String transcript, {
     required String exerciseName,
     required int setNumber,
+    String? unitPreference,
   }) async {
+    final unitContext = unitPreference != null ? 'Use "$unitPreference" as the default unit if none is mentioned. ' : '';
     final response = await _httpClient
         .post(
           Uri.parse('https://openrouter.ai/api/v1/chat/completions'),
@@ -30,7 +32,7 @@ class OpenRouterClient {
               {
                 'role': 'system',
                 'content':
-                    'You extract reps/weight/unit for ONE gym set into strict JSON only. The JSON should have this format: {"reps": int, "weight": number, "notes": string or null, "confidence": number between 0 and 1}. Only provide the JSON, no explanations. ',
+                    'You extract reps/weight/unit for ONE gym set into strict JSON only. The JSON should have this format: {"reps": int, "weight": number, "unit": "kg" or "lb", "notes": string or null, "confidence": number between 0 and 1}. ${unitContext}Only provide the JSON, no explanations. ',
               },
               {
                 'role': 'user',
@@ -61,7 +63,7 @@ class OpenRouterClient {
           'set_number': setNumber,
           'reps': jsonContent['reps'],
           'weight': jsonContent['weight'],
-          'unit': jsonContent['unit'] ?? 'kg',
+          'unit': jsonContent['unit'] ?? unitPreference ?? 'kg',
         },
       ],
       'notes': jsonContent['notes'],

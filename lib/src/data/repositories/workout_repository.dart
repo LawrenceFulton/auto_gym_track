@@ -19,6 +19,8 @@ abstract class WorkoutRepository {
 
   Future<List<SetEntry>> getLastSetHistoryForExercise(String exerciseName);
 
+  Future<List<SetEntry>> getExerciseHistory(String exerciseName);
+
   Future<List<WorkoutTemplate>> getWorkoutTemplates();
 
   Future<void> saveWorkoutTemplate(WorkoutTemplate template);

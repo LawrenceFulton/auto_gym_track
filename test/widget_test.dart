@@ -1,5 +1,6 @@
 import 'package:auto_gym_track/main.dart';
 import 'package:auto_gym_track/src/application/parser/parsed_workout_set.dart';
+import 'package:auto_gym_track/src/application/state/settings_controller.dart';
 import 'package:auto_gym_track/src/data/repositories/workout_repository.dart';
 import 'package:auto_gym_track/src/data/services/openrouter_key_store.dart';
 import 'package:auto_gym_track/src/domain/models/set_entry.dart';
@@ -9,7 +10,11 @@ import 'package:flutter_test/flutter_test.dart';
 void main() {
   testWidgets('prompts for OpenRouter key when no key is stored', (WidgetTester tester) async {
     await tester.pumpWidget(
-      AutoGymTrackApp(keyStore: InMemoryOpenRouterKeyStore(), workoutRepository: _InMemoryWorkoutRepository()),
+      AutoGymTrackApp(
+        keyStore: InMemoryOpenRouterKeyStore(), 
+        workoutRepository: _InMemoryWorkoutRepository(),
+        settingsController: SettingsController(loadImmediately: false),
+      ),
     );
     await tester.pump();
     await tester.pump(const Duration(milliseconds: 200));
@@ -23,6 +28,7 @@ void main() {
       AutoGymTrackApp(
         keyStore: InMemoryOpenRouterKeyStore(seedKey: 'test-key'),
         workoutRepository: _InMemoryWorkoutRepository(),
+        settingsController: SettingsController(loadImmediately: false),
       ),
     );
     await tester.pump();
@@ -61,6 +67,9 @@ class _InMemoryWorkoutRepository implements WorkoutRepository {
 
   @override
   Future<List<SetEntry>> getSessionSetHistory(int sessionId) async => const [];
+
+  @override
+  Future<List<SetEntry>> getExerciseHistory(String exerciseName) async => const [];
 
   @override
   Future<List<SetEntry>> getLastSetHistoryForExercise(String exerciseName) async => const [];

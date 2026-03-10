@@ -13,7 +13,9 @@ class HistoryScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     if (entries.isEmpty) {
       return Card(
-        child: Center(
+        margin: EdgeInsets.zero,
+        child:
+ Center(
           child: Padding(
             padding: const EdgeInsets.all(20),
             child: Column(
@@ -30,7 +32,9 @@ class HistoryScreen extends StatelessWidget {
     }
 
     return Card(
-      child: ListView.separated(
+      margin: EdgeInsets.zero,
+      child:
+ ListView.separated(
         padding: const EdgeInsets.symmetric(vertical: 8),
         itemCount: entries.length,
         separatorBuilder: (_, _) => const Divider(height: 1),

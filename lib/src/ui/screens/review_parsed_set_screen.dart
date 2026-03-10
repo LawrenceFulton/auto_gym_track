@@ -13,7 +13,9 @@ class ReviewParsedSetScreen extends StatelessWidget {
     final confidenceLabel = '${(parsed.confidence * 100).toStringAsFixed(0)}%';
 
     return Card(
-      child: Padding(
+      margin: EdgeInsets.zero,
+      child:
+ Padding(
         padding: const EdgeInsets.all(14),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
